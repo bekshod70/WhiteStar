@@ -1,0 +1,83 @@
+<script type="text/javascript">
+        var gk_isXlsx = false;
+        var gk_xlsxFileLookup = {};
+        var gk_fileData = {};
+        function loadFileData(filename) {
+        if (gk_isXlsx && gk_xlsxFileLookup[filename]) {
+            try {
+                var workbook = XLSX.read(gk_fileData[filename], { type: 'base64' });
+                var firstSheetName = workbook.SheetNames[0];
+                var worksheet = workbook.Sheets[firstSheetName];
+
+                // Convert sheet to JSON to filter blank rows
+                var jsonData = XLSX.utils.sheet_to_json(worksheet, { header: 1, blankrows: false, defval: '' });
+                // Filter out blank rows (rows where all cells are empty, null, or undefined)
+                var filteredData = jsonData.filter(row =>
+                    row.some(cell => cell !== '' && cell !== null && cell !== undefined)
+                );
+
+                // Convert filtered JSON back to CSV
+                var csv = XLSX.utils.aoa_to_sheet(filteredData); // Create a new sheet from filtered array of arrays
+                csv = XLSX.utils.sheet_to_csv(csv, { header: 1 });
+                return csv;
+            } catch (e) {
+                console.error(e);
+                return "";
+            }
+        }
+        return gk_fileData[filename] || "";
+        }
+        </script><!DOCTYPE html>
+<html lang="uz">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="description" content="WhiteStar - O'zbekcha Wikipedia ma'lumotlarini izlash platformasi">
+    <meta name="keywords" content="WhiteStar, Wikipedia, bilim, uzbekistan, bekshod baxronov">
+    <meta name="author" content="bekshod baxronov">
+    <title>WhiteStar - Bilim Yulduzi</title>
+    <link rel="stylesheet" href="styles.css">
+    <link href="https://fonts.googleapis.com/css2?family=Orbitron:wght@400;700&family=Roboto:wght@300;400&display=swap" rel="stylesheet">
+</head>
+<body>
+    <header>
+        <h1>WhiteStar</h1>
+        <nav>
+            <ul>
+                <li><a href="#home">Bosh Sahifa</a></li>
+                <li><a href="#about">Men Haqimda</a></li>
+                <li><a href="#contact">Kontakt</a></li>
+            </ul>
+        </nav>
+    </header>
+
+    <main>
+        <section id="home">
+            <h2>Bilim Yulduziga Xush Kelibsiz!</h2>
+            <p>WhiteStar yordamida o‘zbekcha Wikipedia ma’lumotlarini oson toping.</p>
+            <div class="search-container">
+                <input type="text" id="searchInput" placeholder="Masalan, Toshkent yoki Alisher Navoiy">
+                <button onclick="fetchWikipedia()">Izlash</button>
+            </div>
+            <div id="wikiResult"></div>
+        </section>
+
+        <section id="about">
+            <h2>Men Haqimda</h2>
+            <p>salom, men bekshod baxronov, 16 yoshdaman. WhiteStar - bu mening bilimlarni oson yetkazish uchun yaratgan loyiham.</p>
+        </section>
+
+        <section id="contact">
+            <h2>Kontakt</h2>
+            <p>Email: <a href="mailto:bekshod@example.com">bekshod@example.com</a></p>
+            <p>Telegram: <a href="https://t.me/bekshod_baxronov">@BekshodBaxronov</a></p>
+        </section>
+    </main>
+
+    <footer>
+        <p>© 2025 WhiteStar. loyiha muallifi: bekshod baxronov.</p>
+    </footer>
+
+    <script src="script.js"></script>
+</body>
+</html>
